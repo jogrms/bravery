@@ -5,14 +5,20 @@
 
 (def state (reagent/atom {}))
 
-(defn all-pairs [coll]
+(defn all-pairs
+  "Given a input sequence, output sequence of all pairs of elements
+   from the input sequence"
+  [coll]
   (loop [[x & xs] coll
          result []]
     (if (nil? xs)
       result
       (recur xs (concat result (map #(vector x %) xs))))))
 
-(defn get-letters [v1 v2]
+(defn get-letters
+  "Calculate intermediate Brave values from two sequences of
+   experimental data"
+  [v1 v2]
   (loop [v1 v1
          v2 v2
          a 0
@@ -31,13 +37,17 @@
                na nb nc nd))
       {:a a :b b :c c :d d})))
 
-(defn zipper [v1 v2]
+(defn zipper
+  "The function that is applied to a pair of input rows."
+  [v1 v2]
   {:names [(second v1) (second v2)]
    :letters (get-letters (drop 2 v1) (drop 2 v2))})
 
 (def sqrt js/Math.sqrt)
 
-(defn brave [{{:keys [a b c d]} :letters :as pair}]
+(defn brave
+  "Calculate Brave factor from map of intermediate Brave values."
+  [{{:keys [a b c d]} :letters :as pair}]
   (let [m1 (+ a c)
         m1s (+ b d)
         m2 (+ a b)
@@ -52,6 +62,9 @@
            :kb kb)))2
 
 (defn calc [csv]
+  "Get table in CSV format (string) and, for all pairs of experiments,
+   calculate result map with Brave factor. Otput is the sequence of
+   result maps."
   (let [lines (split csv #"\n")
         table (map #(split % #",") (drop 2 lines))
         pairs (all-pairs table)
@@ -59,7 +72,9 @@
         result (mapv brave zipped)]
     result))
 
-(defn root []
+(defn root
+  "Root react component"
+  []
   [:div.container
    [:h1 "Paste CSV here:"]
    [:textarea#csv {:key "csv"
@@ -75,7 +90,9 @@
       [:p (str "total number of pairs: " (count (:result @state)))]
       [:pre (pprint (:result @state))]])])
 
-(defn start! []
+(defn start! 
+  "Main program entry point"
+  []
   (reagent/render-component
     [root]
     js/document.body))
