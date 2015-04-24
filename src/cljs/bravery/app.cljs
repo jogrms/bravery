@@ -9,11 +9,7 @@
   "Given a input sequence, output sequence of all pairs of elements
    from the input sequence"
   [coll]
-  (loop [[x & xs] coll
-         result []]
-    (if (nil? xs)
-      result
-      (recur xs (concat result (map #(vector x %) xs))))))
+  (for [x coll y coll] [x y]))
 
 (defn get-letters
   "Calculate intermediate Brave values from two sequences of
